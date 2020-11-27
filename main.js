@@ -64,13 +64,6 @@ Vue.filter('formatTime', function(value) {
 })
 
 
-
-
-
-
-
-
-
 App.mpType = 'app'
 
 const app = new Vue({
