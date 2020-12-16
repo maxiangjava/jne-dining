@@ -2,28 +2,43 @@
 	<view>
 		<view class="user-section">
 			<image class="bg" src="/static/user-bg.jpg"></image>
-			<text class="bg-upload-btn yticon icon-paizhao"></text>
 			<view class="portrait-box">
-				<image class="portrait" :src="userInfo.portrait || '/static/missing-face.png'"></image>
-				<text class="pt-upload-btn yticon icon-paizhao"></text>
+				<image class="portrait" :src="userInfo.url || '/static/missing-face.png'"></image>
+			</view>
+		</view>
+		<view>
+			<view class="user-item">
+				<view class="user-item-key">姓名</view>
+				<view class="user-item-value">{{userInfo.userName}}</view>
+			</view>
+			<view class="user-item">
+				<view class="user-item-key">手机号</view>
+				<view class="user-item-value">{{userInfo.mobile}}</view>
+			</view>
+			<view class="user-item">
+				<view class="user-item-key">个性签名</view>
+				<view class="user-item-value" >{{userInfo.individualitySignature}}</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {  
-	    mapState,  
-	    mapMutations  
-	} from 'vuex';  
 	export default {
 		data() {
 			return {
-				
+				userId:this.$store.state.userId,
+				userInfo:{}
 			};
 		},
-		computed:{
-			...mapState(['userInfo']),
+		onLoad(){
+			this.loadData()
+		},
+		methods:{
+			async loadData(userId){
+				this.userInfo = await this.$http('/user/find',{id:this.userId});
+				console.log(this.userInfo)
+			},
 		}
 	}
 </script>
@@ -49,8 +64,8 @@
 			opacity: .7;
 		}
 		.portrait-box{
-			width: 200upx;
-			height: 200upx;
+			width: 300upx;
+			height: 300upx;
 			border:6upx solid #fff;
 			border-radius: 50%;
 			position:relative;
@@ -82,5 +97,21 @@
 		}
 	}
 
+	.user-item{
+			line-height: 40px;
+			margin-top: 5px;
+			background-color: #fff;
+			display: flex;
+			.user-item-key{
+				flex:1;
+				width: 50px;
+				text-align: right;
+			}
+			.user-item-value{
+				flex:3;
+				margin-left: 20px;
+				margin-right: 10px;
+			}
+		}
 
 </style>

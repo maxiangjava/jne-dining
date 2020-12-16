@@ -152,7 +152,7 @@
 		},
 		data() {
 			return {
-				userId: sessionStorage.getItem('userId'),
+				userId:this.$store.state.userId,
 				specClass: 'none',
 				specSelected:[],
 				foodId:'',
@@ -167,6 +167,9 @@
 			};
 		},
 		computed:{
+			hasLogin(){
+				return this.$store.state.hasLogin
+			},
 			price(){
 				return this.foodInfo.price ? this.foodInfo.price.toFixed(2) : this.foodInfo.price
 			},
@@ -231,22 +234,7 @@
 			share(){
 				this.$refs.share.toggleMask();	
 			},
-			//收藏
-			toFavorite(){
-				this.favorite = !this.favorite;
-			},
-			async buy(){
-				console.log('开始创建订单')
-				let orderId = await this.$http('/order/add',{
-					userId:this.userId,
-					amount:this.foodInfo.price,
-					detail:[this.foodInfo]
-				},'POST');
-				console.log('创建的订单编号' + orderId)
-				uni.navigateTo({
-					url: '/pages/order/createOrder?orderId=' + orderId
-				})
-			},
+			
 			stopPrevent(){},
 			
 			//查看评论列表
@@ -257,11 +245,45 @@
 				})
 			},
 			
+			//收藏
+			async toFavorite(){
+				if(this.hasLogin){
+					this.favorite = !this.favorite;
+					await this.$http('/favorite/add',{
+						userId:this.userId,
+						foodId:this.foodId
+					},'POST');
+				}else{
+					uni.navigateTo({url:'/pages/public/login'})  
+				}
+				
+			},
+			async buy(){
+				if(this.hasLogin){
+					console.log('开始创建订单')
+					let orderId = await this.$http('/order/add',{
+						userId:this.userId,
+						amount:this.foodInfo.price,
+						detail:[this.foodInfo]
+					},'POST');
+					console.log('创建的订单编号' + orderId)
+					uni.navigateTo({
+						url: '/pages/order/createOrder?orderId=' + orderId
+					})
+				}else{
+					uni.navigateTo({url:'/pages/public/login'})  
+				}
+			},
+			
 			//添加购物车
 			async addCart(foodId){
-				console.log('添加购物车：' + foodId)
-				let res = await this.$http('/cart/add',{foodId,userId:this.userId});
-				this.$api.msg(res);
+				if(this.hasLogin){
+					console.log('添加购物车：' + foodId)
+					let res = await this.$http('/cart/add',{foodId,userId:this.userId});
+					this.$api.msg(res);
+				}else{
+					uni.navigateTo({url:'/pages/public/login'})  
+				}
 			},
 			
 			async loadData(){

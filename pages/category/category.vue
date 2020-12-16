@@ -35,6 +35,7 @@
 	export default {
 		data() {
 			return {
+				userId:this.$store.state.userId,
 				sizeCalcState: false,
 				tabScrollTop: 0,
 				menuId:0,
@@ -67,7 +68,7 @@
 			//添加购物车
 			async addCart(foodId){
 				console.log('添加购物车：' + foodId)
-				let res = await this.$http('/cart/add',{foodId,userId:sessionStorage.getItem('userId')});
+				let res = await this.$http('/cart/add',{foodId,userId:this.userId});
 				this.$api.msg(res);
 			},
 			//查看详情

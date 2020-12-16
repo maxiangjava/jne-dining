@@ -1,7 +1,7 @@
 <template>
 	<view class="content b-t">
-		<view class="list b-b" v-for="(item, index) in addressList" :key="index" @click="checkAddress(item)">
-			<view class="wrapper">
+		<view class="list b-b" v-for="(item, index) in addressList" :key="index" >
+			<view class="wrapper" @click="checkAddress(item)">
 				<view class="address-box">
 					<text v-if="item.defaultStatus" class="tag">默认</text>
 					<text class="address">{{item.title}}</text>
@@ -14,7 +14,6 @@
 			<uni-icons style="margin-right: 10px;" type="trash" @click="remove(item)"></uni-icons>
 			<uni-icons type="compose" @click="addAddress('edit', item)"></uni-icons>
 		</view>
-		
 		<button class="add-btn" @click="addAddress('add')">新增地址</button>
 	</view>
 </template>
@@ -23,7 +22,7 @@
 	export default {
 		data() {
 			return {
-				userId: sessionStorage.getItem('userId'),
+				userId:this.$store.state.userId,
 				source: 0,
 				addressList: []
 			}
@@ -33,7 +32,6 @@
 			this.source = option.source;
 		},
 		methods: {
-			
 			async loadData(){
 				this.addressList = await this.$http('/address/list',{userId:this.userId});
 				console.log(this.addressList);
@@ -56,6 +54,8 @@
 				}
 			},
 			addAddress(type, item){
+				console.log(type)
+				console.log(item)
 				uni.navigateTo({
 					url: `/pages/address/addressManage?type=${type}&data=${JSON.stringify(item)}`
 				})

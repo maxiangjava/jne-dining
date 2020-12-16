@@ -3,21 +3,13 @@
 		<swiper class="carousel" indicator-dots=true circular=true interval="3000" duration="700">
 			<swiper-item v-for="(item,index) in data.imgList" :key="index">
 				<view class="image-wrapper">
-					<image
-						:src="item.src" 
-						:class="item.loaded" 
-						mode="aspectFill"
-						@load="imageOnLoad('imgList', index)" 
-					></image>
+					<image :src="item.src" :class="item.loaded" mode="aspectFill" @load="imageOnLoad('imgList', index)" ></image>
 				</view>
 			</swiper-item>
 		</swiper>
 		<view class="scroll-view-wrapper">
 			<scroll-view class="episode-panel" :class="{Skeleton:!loaded}" scroll-x>
-				<view v-for="(item, index) in data.episodeList" :key="index"
-					:class="{current: currentEpd===item}"
-					@click="changeEpd(index)"
-				>
+				<view v-for="(item, index) in data.episodeList" :key="index" :class="{current: currentEpd===item}" @click="changeEpd(index)" >
 					{{item}}
 				</view>
 			</scroll-view>
@@ -39,17 +31,9 @@
 		<view class="guess">
 			<view class="section-tit">猜你喜欢</view>
 			<view class="guess-list">
-				<view 
-					v-for="(item, index) in data.guessList" :key="index"
-					class="guess-item"
-				>
+				<view v-for="(item, index) in data.guessList" :key="index" class="guess-item" >
 					<view class="image-wrapper">
-						<image 
-							:src="item.src" 
-							:class="item.loaded" 
-							mode="aspectFill"
-							@load="imageOnLoad('guessList', index)" 
-						></image>
+						<image :src="item.src" :class="item.loaded" mode="aspectFill"@load="imageOnLoad('guessList', index)" ></image>
 					</view>
 					<text class='title clamp' :class="{Skeleton:!loaded}">{{item.title}}</text>
 					<text class="clamp" :class="{Skeleton:!loaded}">{{item.title2}}</text>
@@ -60,9 +44,7 @@
 		<view class="evalution">
 			<view class="section-tit">评论</view>
 			<view class="eva-list" :class="{Skeleton:!loaded}">
-				<view  v-for="(item, index) in data.evaList" :key="index"
-					class="eva-item"
-				>
+				<view  v-for="(item, index) in data.evaList" :key="index"class="eva-item">
 					<image :src="item.src" mode="aspectFill"></image>
 					<view class="eva-right">
 						<text>{{item.nickname}}</text>
@@ -77,11 +59,7 @@
 			</view>
 		</view>
 		<!-- 分享 -->
-		<share 
-			ref="share" 
-			:contentHeight="580"
-			:shareList="shareList"
-		></share>
+		<share ref="share" :contentHeight="580" :shareList="shareList"></share>
 	</view>
 </template>
 

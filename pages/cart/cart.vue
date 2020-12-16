@@ -18,10 +18,8 @@
 				<block v-for="(item, index) in cartList" :key="item.id">
 					<view class="cart-item" :class="{'b-b': index!==cartList.length-1}">
 						<view class="image-wrapper">
-							<image :src="item.img" :class="[item.loaded]" mode="aspectFill" lazy-load 
-								@load="onImageLoad('cartList', index)" @error="onImageError('cartList', index)"></image>
-							<view class="yticon icon-xuanzhong2 checkbox" :class="{checked: item.checked}"
-								@click="check('item', index)"></view>
+							<image :src="item.img" class="loaded" mode="aspectFill" lazy-load></image>
+							<view class="yticon icon-xuanzhong2 checkbox" :class="{checked: item.checked}" @click="check('item', index)"></view>
 						</view>
 						<view class="item-right">
 							<text class="clamp title">{{item.title}}</text>
@@ -42,9 +40,8 @@
 			<!-- 底部菜单栏 -->
 			<view class="action-section">
 				<view class="checkbox">
-					<image :src="allChecked?'/static/selected.png':'/static/select.png'" 
-						mode="aspectFit"@click="check('all')"></image>
-					<view class="clear-btn" :class="{show: allChecked}" @click="clearCart">清空</view>
+					<image :src="allChecked?'/static/selected.png':'/static/select.png'" mode="aspectFit" @click="check('all')"></image>
+					<view class="clear-btn show" @click="clearCart">清空</view>
 				</view>
 				<view class="total-box">
 					<text class="price">¥{{total}}</text>
@@ -65,6 +62,7 @@
 		},
 		data() {
 			return {
+				userId:this.$store.state.userId,
 				allChecked: false, //全选状态  true|false
 				empty: false, //空白页现实  true|false
 				cartList: [],
@@ -84,16 +82,12 @@
 		},
 		computed:{
 			hasLogin(){
-				return sessionStorage.getItem('hasLogin')
-			},
-			user(){
-				return JSON.parse(sessionStorage.getItem('user'))
+				return this.$store.state.hasLogin
 			},
 			total(){
 				let total = 0;
 				this.cartList.forEach(item=>{
 					if(item.checked){
-						console.log(5555)
 						total += item.price * item.sum;
 					}
 				})
@@ -103,15 +97,7 @@
 		methods: {
 			//请求数据
 			async loadData(){
-				this.cartList = await this.$http('/cart/list',{userId:1});
-			},
-			//监听image加载完成
-			onImageLoad(key, index) {
-				this.$set(this[key][index], 'loaded', 'loaded');
-			},
-			//监听image加载失败
-			onImageError(key, index) {
-				this[key][index].image = '/static/errorImage.jpg';
+				this.cartList = await this.$http('/cart/list',{userId:this.userId});
 			},
 			navToLogin(){
 				uni.navigateTo({
@@ -144,24 +130,28 @@
 				window.location.reload()
 			},
 			//清空
-			async clearCart(){
-				let userId = this.user.userId
-				console.log('清空购物车' + userId)
-				await this.$http('/cart/remove',{userId});
-				window.location.reload()
+			clearCart(){
+				uni.showModal({
+					title: '提示',
+					content: '是否确认清空购物车',
+					success: async (res) => {
+						if (res.confirm) {
+							await this.$http('/cart/remove',{userId:this.userId});
+							window.location.reload()
+						}
+					}
+				});
 			},
-			//计算总价
 			
 			//创建订单
 			async createOrder(){
 				console.log('开始创建订单')
 				let orderId = await this.$http('/order/add',{
-					userId:this.user.userId,
+					userId:this.userId,
 					amount:this.total,
 					detail:this.cartList.filter(item=>{return item.checked})
 				},'POST');
 				console.log('创建的订单编号' + orderId)
-			
 				uni.navigateTo({
 					url: '/pages/order/createOrder?orderId=' + orderId
 				})
@@ -170,7 +160,9 @@
 		},
 		onShow(){
 			console.log('页面显示')
-			this.loadData()
+			if(this.hasLogin){
+				this.loadData()
+			}
 		},
 		onHide(){
 			console.log('页面隐藏')

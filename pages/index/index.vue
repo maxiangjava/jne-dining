@@ -57,7 +57,6 @@
 				<text class="tit">猜你喜欢</text>
 				<text class="tit2">Guess You Like It</text>
 			</view>
-			<text class="yticon icon-you"></text>
 		</view>
 		
 		<view class="guess-section">
@@ -66,11 +65,8 @@
 					<image :src="item.img" mode="aspectFill"></image>
 				</view>
 				<text class="title clamp">{{item.title}}</text>
-				<text class="price">
-					￥{{item.price.toFixed(2)}}
-					<text style="text-decoration: line-through;margin-left: 10px;color: gray">
-						￥{{item.originalPrice.toFixed(2)}}
-					</text>
+				<text class="price">￥{{item.price.toFixed(2)}}
+					<text style="text-decoration: line-through;margin-left: 10px;color: gray">￥{{item.originalPrice.toFixed(2)}}</text>
 				</text>
 			</view>
 		</view>
@@ -85,6 +81,7 @@
 
 		data() {
 			return {
+				userId:this.$store.state.userId,
 				titleNViewBackground: '',
 				swiperCurrent: 0,
 				swiperLength: 0,
@@ -94,7 +91,6 @@
 		},
 
 		onLoad(options) {
-			console.log(process)
 			let userId = 1;
 			let query = window.location.search.substring(1);
 			let vars = query.split("&");
@@ -109,6 +105,7 @@
 			this.loadData();
 			this.login(userId)
 		},
+		
 		methods: {
 			
 			async login(userId){
@@ -159,7 +156,7 @@
 		onNavigationBarButtonTap(e) {
 			const index = e.index;
 			if (index === 0) {
-				this.$api.msg('点击了扫描');
+				console.log('点击了扫描')
 			} else if (index === 1) {
 				// #ifdef APP-PLUS
 				const pages = getCurrentPages();

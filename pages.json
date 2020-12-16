@@ -51,7 +51,7 @@
 		{
 			"path": "pages/userinfo/userinfo",
 			"style": {
-				"navigationBarTitleText": "修改资料"
+				"navigationBarTitleText": "个人资料"
 			}
 		}, {
 			"path": "pages/cart/cart",
@@ -61,12 +61,12 @@
 		}, {
 			"path": "pages/public/login",
 			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom",
-				"app-plus": {
-					"titleNView": false,
-					"animationType": "slide-in-bottom"
-				}
+				"navigationBarTitleText": "登陆"
+			}
+		}, {
+			"path": "pages/public/registration",
+			"style": {
+				"navigationBarTitleText": "注册"
 			}
 		}, {
 			"path": "pages/user/user",
@@ -165,15 +165,45 @@
         ,{
             "path" : "pages/product/list",
             "style" : {
-				"enablePullDownRefresh": true,
-				"navigationBarTitleText": "商品列表"
-			}
+						"enablePullDownRefresh": true,
+						"navigationBarTitleText": "商品列表"
+					}
         }
 		,{
 		    "path" : "pages/order/OrderDetail",
 		    "style" : {
 				"enablePullDownRefresh": true,
 				"navigationBarTitleText": "订单详情"
+			}
+		}
+		,{
+		    "path" : "pages/set/About",
+		    "style" : {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "关于我们"
+			}
+		}
+		,{
+		    "path" : "pages/set/Suggest",
+		    "style" : {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "意见反馈"
+			}
+		}
+		,{
+			"path" : "pages/user/Favorite",
+			"style" : {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "收藏列表",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "清空",
+							"fontSize": "16",
+							"color": "#fff"
+						}]
+					}
+				}
 			}
 		}
 		,{

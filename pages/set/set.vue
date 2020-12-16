@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="list-cell b-b m-t" hover-class="cell-hover" :hover-stay-time="50">
+		<view class="list-cell b-b m-t" @click="navTo('/pages/userinfo/userinfo')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">个人资料</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
@@ -13,15 +13,15 @@
 			<text class="cell-tit">消息推送</text>
 			<switch checked color="#fa436a" @change="switchChange" />
 		</view>
-		<view class="list-cell m-t b-b" hover-class="cell-hover" :hover-stay-time="50">
+		<view class="list-cell m-t b-b" @click="clearStorage()" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">清除缓存</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell b-b"  hover-class="cell-hover" :hover-stay-time="50">
+		<view class="list-cell b-b" @click="navTo('/pages/set/About')"  hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">关于我们</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell b-b"  hover-class="cell-hover" :hover-stay-time="50">
+		<view class="list-cell b-b" @click="navTo('/pages/set/Suggest')"  hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">意见反馈</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
@@ -64,15 +64,13 @@
 			//退出登录
 			toLogout(){
 				uni.showModal({
-				    content: '确定要退出登录么',
-				    success: (e)=>{
-				    	if(e.confirm){
-				    		this.logout();
-				    		setTimeout(()=>{
-				    			uni.navigateBack();
-				    		}, 200)
-				    	}
-				    }
+					content: '确定要退出登录么',
+					success: (e)=>{
+						if(e.confirm){
+							this.logout();
+							uni.switchTab({url:'/pages/user/user'});
+						}
+					}
 				});
 			},
 			//switch
@@ -80,6 +78,11 @@
 				let statusTip = e.detail.value ? '打开': '关闭';
 				this.$api.msg(`${statusTip}消息推送`);
 			},
+			clearStorage(){
+				setTimeout(()=>{
+					this.$api.msg('已清理');
+				},1000)
+			}
 
 		}
 	}

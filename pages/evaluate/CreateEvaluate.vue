@@ -1,40 +1,38 @@
 <template>
-    <view class="ce-content">
-		<view class="ce-item" v-for="item in foodList" :key="item.foodId" >
-			<view class="ce-item-img">
-				<view>
-					<image style="width: 80px;height: 80px;" :src="item.img" mode=""></image>
-				</view>
-				<view style="margin-left: 10px;margin: auto 5px;">
-					<view>{{item.title}}</view>
-					<view>价格：<text style="color: red;">￥{{item.price}}</text></view>
-					<view>数量：{{item.num}} 份</view>
-				</view>
+	<view class="ce-content">
+	<view class="ce-item" v-for="item in foodList" :key="item.foodId" >
+		<view class="ce-item-img">
+			<view>
+				<image style="width: 80px;height: 80px;" :src="item.img" mode=""></image>
 			</view>
-			<view class="r-top">
-				<textarea style="height: 100px;" maxlength="100" placeholder-style="color:rgba(153,153,153,1);" v-model="item.evaluate" placeholder="请输入" />
-				<view class="r-top-t">
-				 	<view></view>
-					<view>{{item.evaluate ? item.evaluate.length : 0}}/120字</view>
-				 </view>
+			<view style="margin-left: 10px;margin: auto 5px;">
+				<view>{{item.title}}</view>
+				<view>价格：<text style="color: red;">￥{{item.price}}</text></view>
+				<view>数量：{{item.num}} 份</view>
 			</view>
 		</view>
-        <button class="add-btn" @click="issue()">发布</button>
-    </view>
+		<view class="r-top">
+			<textarea style="height: 100px;" maxlength="100" placeholder-style="color:rgba(153,153,153,1);" v-model="item.evaluate" placeholder="请输入" />
+			<view class="r-top-t">
+				<view></view>
+				<view>{{item.evaluate ? item.evaluate.length : 0}}/120字</view>
+			 </view>
+		</view>
+	</view>
+			<button class="add-btn" @click="issue()">发布</button>
+	</view>
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
+	export default {
+		data() {
+			return {
+				userId:this.$store.state.userId,
 				orderId:'',
-                orderInfo: {},
+				orderInfo: {},
 				foodList:[],
 				content:''
-            }
-        },
-		computed:{
-			
+			}
 		},
 		onLoad(options){
 			this.orderId = options.orderId;
@@ -45,8 +43,7 @@
 			async issue(){
 				let list = this.foodList
 				let orderId = this.orderId
-				let userId = sessionStorage.getItem('userId');
-				await this.$http('/evaluate/issue',{userId,orderId,list},'POST');
+				await this.$http('/evaluate/issue',{userId:this.userId,orderId,list},'POST');
 				uni.navigateBack();
 			},
 			async loadData(){
@@ -55,7 +52,7 @@
 				console.log(this.orderInfo);
 			},
 		}
-    }
+  }
 </script>
 
 <style lang="scss">

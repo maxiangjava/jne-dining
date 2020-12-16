@@ -37,6 +37,16 @@
 
 		<!-- 优惠明细 -->
 		<view class="yt-list">
+			<view class="yt-list-cell b-b">
+				<view class="cell-icon lpk">预</view>
+				<text class="cell-tit clamp">送达时间</text>
+				<view class="cell-tip disabled">
+					<picker mode="time" :value="arriveTime" start="00:00" end="23:59" @change="bindTimeChange">
+					  <view class="uni-input">{{arriveTime}}</view>
+					</picker>
+				</view>
+				<text class="cell-more wanjia wanjia-gengduo-d"></text>
+			</view>
 			<view class="yt-list-cell b-b" @click="toggleMask('show')">
 				<view class="cell-icon">券</view>
 				<text class="cell-tit clamp">优惠券</text>
@@ -109,11 +119,13 @@
 	export default {
 		data() {
 			return {
+				userId:this.$store.state.userId,
 				orderId: '', //订单编号
 				orderInfo: {}, //订单信息
 				orderDetailList: [], //订单信息
 				maskState: 0, //优惠券面板显示状态
 				desc: '', //备注
+				arriveTime:'立即送出',
 				payType: 1, //1微信 2支付宝
 				couponList: [
 					{
@@ -131,11 +143,6 @@
 				],
 				addressData: {}
 			}
-		},
-		computed:{
-			user(){
-				return JSON.parse(sessionStorage.getItem('user'))
-			},
 		},
 		onLoad(option){
 			//商品数据
@@ -158,9 +165,19 @@
 			changePayType(type){
 				this.payType = type;
 			},
+			bindTimeChange(e) {
+			  this.arriveTime = e.target.value
+			},
 			submit(){
+				let data = {
+					money:this.orderInfo.amount,
+					orderId:this.orderId,
+					desc:this.desc,
+					addressId:this.addressData.addressId,
+					arriveTime:this.arriveTime
+				}
 				uni.redirectTo({
-					url: '/pages/money/pay?money=' + this.orderInfo.amount + '&orderId=' + this.orderId + '&desc=' + this.desc + '&addressId=' + this.addressData.addressId
+					url: '/pages/money/pay?data=' + JSON.stringify(data)
 				})
 			},
 			stopPrevent(){},
@@ -169,7 +186,7 @@
 				let order = await this.$http('/order/info',{orderId});
 				this.orderInfo = order.orderInfo;
 				this.orderDetailList = order.orderDetailList;
-				this.addressData = await this.$http('/address/findDefault',{userId:this.user.userId});
+				this.addressData = await this.$http('/address/findDefault',{userId:this.userId});
 			},
 			
 			

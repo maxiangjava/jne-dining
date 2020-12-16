@@ -2,25 +2,20 @@
 	/**
 	 * vuex管理登陆状态，具体可以参考官方登陆模板示例
 	 */
-	import {
-		mapMutations
-	} from 'vuex';
+	import {mapMutations} from 'vuex';
 	export default {
 		methods: {
-			...mapMutations(['login'])
+			...mapMutations(['login','setLookHistoryList'])
 		},
-		onLaunch: function() {
-			let userInfo = uni.getStorageSync('userInfo') || '';
-			if(userInfo.id){
-				//更新登陆状态
-				uni.getStorage({
-					key: 'userInfo',
-					success: (res) => {
-						this.login(res.data);
-					}
-				});
+		onLaunch: async function() {
+			console.log(88888)
+			let hasLogin = uni.getStorageSync('hasLogin') || false;
+			let userInfo = {};
+			userInfo.emplyId = uni.getStorageSync('userId');
+			userInfo.token = uni.getStorageSync('token');
+			if(hasLogin){
+				this.login(userInfo);
 			}
-			
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -466,5 +461,6 @@
 			line-height:54upx !important;
 		}
 	}
+
 	
 </style>

@@ -2,25 +2,20 @@
 	<view class="app">
 		<view class="price-box">
 			<text>支付金额</text>
-			<text class="price">{{money}}</text>
+			<text class="price">{{data.money}}</text>
 		</view>
-
 		<view class="pay-type-list">
-
 			<view class="type-item b-b" @click="changePayType(1)">
 				<text class="icon yticon icon-erjiye-yucunkuan"></text>
 				<view class="con">
 					<text class="tit">餐卡支付</text>
 					<text>可用余额 ¥{{balance}}</text>
 				</view>
-				
 				<label class="radio">
 					<radio value="" color="#fa436a" :checked='payType == 1' /></radio>
 				</label>
 			</view>
-			
 		</view>
-		
 		<text class="mix-btn" @click="confirm">确认支付</text>
 	</view>
 </template>
@@ -30,11 +25,15 @@
 	export default {
 		data() {
 			return {
-				userId: 1,
-				orderId: 1,
 				balance:0,
-				money:0,
-				desc:'',
+				data:{
+					money:0,
+					desc:'',
+					arriveTime:'',
+					addressId:'',
+					userId: this.$store.state.userId,
+					orderId: 1,
+				},
 				payType: 1,
 				orderInfo: {}
 			};
@@ -44,20 +43,15 @@
 		},
 		onLoad(options) {
 			console.log(options)
-			this.money = options.money;
-			this.orderId = options.orderId;
-			this.addressId = options.addressId;
-			this.desc = options.desc;
+			this.data = JSON.parse(options.data)
 			this.loadData();
 		},
 
 		methods: {
 			
 			async loadData(userId){
-				this.userId = sessionStorage.getItem('userId');
-				let user = await this.$http('/user/find',{id:this.userId});
+				let user = await this.$http('/user/find',{id:this.data.userId});
 				this.balance = user.balance;
-				sessionStorage.setItem('user',JSON.stringify(user));
 			},
 			
 			//选择支付方式
@@ -66,10 +60,10 @@
 			},
 			//确认支付
 			async confirm() {
-				if(this.money > this.balance){
+				if(this.data.money > this.balance){
 					this.$api.msg('可用余额不足');
 				}else{
-					await this.$http('/order/pay',{userId:this.userId,money:this.money,orderId:this.orderId,desc:this.desc,addressId:this.addressId});
+					await this.$http('/order/pay',this.data);
 					uni.redirectTo({
 						url: '/pages/money/paySuccess'
 					})

@@ -36,7 +36,7 @@
 			
 			<view class="tj-sction">
 				<view class="tj-item">
-					<text class="num">{{userInfo.balance}}</text>
+					<text class="num">{{userInfo.balance || 0}}</text>
 					<text>余额</text>
 				</view>
 				<view class="tj-item">
@@ -44,7 +44,7 @@
 					<text>优惠券</text>
 				</view>
 				<view class="tj-item">
-					<text class="num">{{userInfo.integral}}</text>
+					<text class="num">{{userInfo.integral || 0}}</text>
 					<text>积分</text>
 				</view>
 			</view>
@@ -73,23 +73,20 @@
 					<text class="yticon icon-lishijilu"></text>
 					<text>浏览历史</text>
 				</view>
-				<scroll-view scroll-x class="h-list">
+				<scroll-view scroll-x class="h-list" v-if="hasLogin">
 					<image v-for="item in lookHistoryList" :key='item.id' @click="lookHis(item.foodId)" :src="item.img" mode="aspectFill"></image>
 				</scroll-view>
 				<list-cell icon="icon-dizhi" iconColor="#5fcda2" title="地址管理" @eventClick="navTo('/pages/address/address')"></list-cell>
-				<list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#54b4ef" title="我的收藏"></list-cell>
+				<list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#54b4ef" title="我的收藏" @eventClick="navTo('/pages/user/Favorite')"></list-cell>
 				<list-cell icon="icon-shezhi1" iconColor="#e07472" title="设置" border="" @eventClick="navTo('/pages/set/set')"></list-cell>
 			</view>
 		</view>
-			
-		
-    </view>  
+  </view>  
 </template>  
 <script>  
 	import listCell from '@/components/mix-list-cell';
-    import {  
-        mapState 
-    } from 'vuex';  
+  import {mapMutations} from 'vuex';  
+	
 	let startY = 0, moveY = 0, pageAtTop = true;
     export default {
 		components: {
@@ -97,48 +94,32 @@
 		},
 		data(){
 			return {
+				userId:this.$store.state.userId,
 				coverTransform: 'translateY(0px)',
 				coverTransition: '0s',
-				lookHistoryList: [],
-				userInfo: {},
-				moving: false,
+				lookHistoryList:[],
+				userInfo:{},
+				moving: false
 			}
 		},
 		onLoad(){
 			this.loadData()
 		},
-		// #ifndef MP
-		onNavigationBarButtonTap(e) {
-			const index = e.index;
-			if (index === 0) {
-				this.navTo('/pages/set/set');
-			}else if(index === 1){
-				// #ifdef APP-PLUS
-				const pages = getCurrentPages();
-				const page = pages[pages.length - 1];
-				const currentWebview = page.$getAppWebview();
-				currentWebview.hideTitleNViewButtonRedDot({
-					index
-				});
-				// #endif
-				uni.navigateTo({
-					url: '/pages/notice/notice'
-				})
+    computed: {
+			hasLogin(){
+				return this.$store.state.hasLogin
 			}
 		},
-		// #endif
-        computed: {
-			hasLogin(){
-				return sessionStorage.getItem('hasLogin')
-			},
-		},
-        methods: {
+    methods: {
+			...mapMutations(['login','setLookHistoryList']),
 			
-			async loadData(userId){
-				this.userId = sessionStorage.getItem('userId');
-				this.userInfo = await this.$http('/user/find',{id:this.userId});
-				this.lookHistoryList = await this.$http('/history/list',{userId:this.userId});
-				console.log(this.userInfo)
+			async loadData(){
+				let hasLogin = uni.getStorageSync('hasLogin') || false;
+				if(hasLogin && userId){
+					this.userInfo = await this.$http('/register/selectEmply',{id:this.userId});
+					this.lookHistoryList = await this.$http('/history/list',{userId:this.userId});
+					this.login(userInfo);
+				}
 			},
 			
 			lookHis(foodId){

@@ -105,11 +105,9 @@
 			};
 		},
 		computed:{
-			user(){
-				return JSON.parse(sessionStorage.getItem('user'))
+			userId(){
+				return this.$store.state.userId
 			},
-			
-			
 		},
 		onLoad(options){
 			/**
@@ -135,7 +133,7 @@
 				let index = this.tabCurrentIndex;
 				let navItem = this.navList[index];
 				let state = navItem.state;
-				navItem.orderList = await this.$http('/order/listByState',{userId:this.user.userId,state});
+				navItem.orderList = await this.$http('/order/listByState',{userId:this.userId,state});
 				console.log(navItem.orderList)
 			}, 
 			

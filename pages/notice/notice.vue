@@ -21,6 +21,7 @@
 	export default {
 		data() {
 			return {
+				userId:this.$store.state.userId,
 				noticeList:[]
 			}
 		},
@@ -30,7 +31,7 @@
 		methods: {
 			//请求数据
 			async loadData(){
-				this.noticeList = await this.$http('/payHistory/list',{userId:sessionStorage.getItem('userId')});
+				this.noticeList = await this.$http('/payHistory/list',{userId:this.userId});
 				console.log(this.noticeList)
 			},
 			//查看详情

@@ -30,7 +30,7 @@
 		data() {
 			return {
 				addressData: {
-					userId: sessionStorage.getItem('userId'),
+					userId:this.$store.state.userId,
 					userName: '',
 					mobile: '',
 					title: '天心电子世界',
